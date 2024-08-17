@@ -108,7 +108,6 @@
 //   );
 // }
 
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
@@ -148,6 +147,9 @@ export default function App() {
     console.log(textInputValue, webCamData);
   }, [textInputValue, webCamData]);
 
+  useEffect(() => {
+    console.log("I'm in");
+  }, []);
   const change = () => {
     setIsName(!isName);
   };
@@ -271,7 +273,9 @@ const WebCam = ({ webCamData, setWebCamData }: any) => {
   const sendImageToBackend = async (image: string) => {
     try {
       // Convert base64 to Blob
-      const blob = await fetch(image,{mode:"no-cors"}).then((res) => res.blob());
+      const blob = await fetch(image, { mode: "no-cors" }).then((res) =>
+        res.blob()
+      );
 
       // Create htmlFormData and append the image
       const htmlFormData = new FormData();
