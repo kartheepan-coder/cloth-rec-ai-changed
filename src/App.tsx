@@ -148,7 +148,7 @@ export default function App() {
   }, [textInputValue, webCamData]);
 
   useEffect(() => {
-    console.log("I'm in");
+    console.log("I'm Mayoorathan");
   }, []);
   const change = () => {
     setIsName(!isName);
