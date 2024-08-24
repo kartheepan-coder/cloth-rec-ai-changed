@@ -1,44 +1,95 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import WebCamComp from "./components/Webcam";
+import { Button, Card } from "./components/Card";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const [webCamData, setWebCamData] = useState("");
   const [textInputValue, setTextInputValue] = useState("");
   const [isName, setIsName] = useState(false);
+  const backendUrl = "http://127.0.0.1:5000/api";
+  const [userName, setUserName] = useState("");
+  const [userGender, setUserGender] = useState<string>("");
+  const [redirect, setredirect] = useState(false);
+  const navigate = useNavigate();
 
-  const change = () => {
-    setIsName(!isName);
+  // useEffect(() => {
+  //   console.log(userGender);
+  //   console.log(userName);
+  // }, [userName, userGender])
+
+  // ;
+
+  // const handleRedirect = () => {
+  //   const someProps = { name: userName };
+  //   navigate("/profile", { state: someProps });
+  // };
+  useEffect(() => {
+    if (redirect) {
+      console.log(userName, userGender);
+      const someProps = { name: userName, gender: userGender.toLowerCase() };
+      navigate("/profile", { state: someProps });
+    }
+  }, [redirect]);
+
+  const change = async () => {
+    try {
+      const response = await fetch(backendUrl + "/name_verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: textInputValue }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const user = data[0];
+        setUserName(user["name"]);
+        setUserGender(user["gender"]);
+        setredirect(!redirect);
+
+        // handleRedirect();
+      } else {
+        setIsName(!isName);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
-      <div className="bg-white text-white p-8 rounded-lg shadow-lg flex flex-col w-1/2 min-h-[200px] max-h-[1000px] flex justify-center items-center">
-        {isName ? (
-          <WebCamComp
-            webCamData={webCamData}
-            setWebCamData={setWebCamData}
-            name={textInputValue}
-          />
-        ) : (
-          <>
+      {/* // <div className="bg-white text-white p-8 rounded-lg shadow-lg flex flex-col w-1/2 min-h-[200px] max-h-[1000px] flex justify-center items-center"> */}
+
+      {isName ? (
+        <WebCamComp
+          webCamData={webCamData}
+          setWebCamData={setWebCamData}
+          name={textInputValue}
+        />
+      ) : (
+        <Card>
+          <div className="flex flex-col h-[300px] justify-center ">
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Your name
+            </label>
             <TextInput
               textInputValue={textInputValue}
               setTextInputValue={setTextInputValue}
             />
-            <button
-              type="button"
-              className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 mt-1"
-              onClick={change}
-            >
-              Enter
-            </button>
-          </>
-        )}
-
-        {/* <FileUpload /> */}
-      </div>
+            <div className="mt-[10px]">
+              <Button message={"Enter"} onClick={change} />
+            </div>
+          </div>
+        </Card>
+      )}
     </div>
+    // </div>
   );
 }
 
@@ -47,8 +98,8 @@ const TextInput = ({ textInputValue, setTextInputValue }: any) => {
     setTextInputValue(event.target.value);
   };
   return (
-    <div className="flex max-w-[500px]">
-      <span className="inline-flex items-center px-3 text-sm text-white bg-white border   rounded-e-0 border-e-0 rounded-s-md dark:bg-white dark:text-white dark:border-black">
+    <div className="flex">
+      {/* <span className="inline-flex items-center px-3 text-sm text-white bg-white border   rounded-e-0 border-e-0 rounded-s-md dark:bg-white dark:text-white dark:border-black">
         <svg
           className="w-4 h-4 text-blue-500 dark:text-blue-400"
           aria-hidden="true"
@@ -58,13 +109,13 @@ const TextInput = ({ textInputValue, setTextInputValue }: any) => {
         >
           <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
         </svg>
-      </span>
+      </span> */}
       <input
         type="text"
         id="website-admin"
         value={textInputValue}
         onChange={handleInputChange}
-        className="rounded-none rounded-e-lg bg-blue-500 text-white  block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5   dark:border-gray-600 dark:placeholder-gray-400 dark:text-red focus-visible:outline-none"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
         placeholder="Mayoorathan"
       />
     </div>
