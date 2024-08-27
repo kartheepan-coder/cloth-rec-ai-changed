@@ -25,6 +25,8 @@ export default function Profile({
     const gender = state.gender as string;
     console.log(state);
   }, [state]);
+
+  const url_Image = `http://127.0.0.1:5000/api/image/${state.name}`
   return (
     <div className=" h-lvh flex justify-around items-center ">
       <Card>
@@ -42,7 +44,7 @@ export default function Profile({
           <div className="flex justify-around items-center pb-10">
             <img
               className="mb-3 rounded-2xl shadow-lg object-center w-[200px] max-h-auto "
-              src={myImg}
+              src={url_Image}
               alt="profile image"
             />
 

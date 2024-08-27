@@ -168,7 +168,6 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
               setUserName(user["name"]);
               setUserGender(user["gender"]);
               setfaceTone(user["facetone"]);
-
               setredirect(!redirect);
 
               // handleRedirect();
