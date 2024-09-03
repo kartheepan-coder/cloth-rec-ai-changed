@@ -11,6 +11,7 @@ export default function App() {
   const backendUrl = "http://127.0.0.1:5000/api";
   const [userName, setUserName] = useState("");
   const [userGender, setUserGender] = useState<string>("");
+  const [skinTone, setskinTone] = useState("");
   const [redirect, setredirect] = useState(false);
   const navigate = useNavigate();
 
@@ -28,7 +29,11 @@ export default function App() {
   useEffect(() => {
     if (redirect) {
       console.log(userName, userGender);
-      const someProps = { name: userName, gender: userGender.toLowerCase() };
+      const someProps = {
+        name: userName,
+        gender: userGender.toLowerCase(),
+        faceTone: skinTone,
+      };
       navigate("/profile", { state: someProps });
     }
   }, [redirect]);
@@ -48,6 +53,7 @@ export default function App() {
         const user = data[0];
         setUserName(user["name"]);
         setUserGender(user["gender"]);
+        setskinTone(user["facetone"]);
         setredirect(!redirect);
 
         // handleRedirect();

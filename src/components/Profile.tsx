@@ -14,9 +14,11 @@ import { useLocation } from "react-router-dom";
 export default function Profile({
   name = "",
   gender = "",
+  faceTone = "",
 }: {
   name?: string;
   gender?: string;
+  faceTone?: string;
 }) {
   const location = useLocation();
   const state = location.state || {};
@@ -26,7 +28,7 @@ export default function Profile({
     console.log(state);
   }, [state]);
 
-  const url_Image = `http://127.0.0.1:5000/api/image/${state.name}`
+  const url_Image = `http://127.0.0.1:5000/api/image/${state.name}`;
   return (
     <div className=" h-lvh flex justify-around items-center ">
       <Card>
