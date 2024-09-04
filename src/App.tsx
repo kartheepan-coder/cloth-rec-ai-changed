@@ -127,7 +127,9 @@ const TextInput = ({ textInputValue, setTextInputValue }: any) => {
     </div>
   );
 };
-const FileUpload = () => {
+
+// React.ChangeEvent<HTMLInputElement>;
+const FileUpload = (handleFileChange: any) => {
   return (
     <div className="flex items-center justify-center w-full mt-8">
       <label
@@ -158,8 +160,14 @@ const FileUpload = () => {
             SVG, PNG, JPG or GIF (MAX. 800x400px)
           </p>
         </div>
-        <input id="dropzone-file" type="file" className="hidden" />
+        <input
+          id="dropzone-file"
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+        />
       </label>
     </div>
   );
 };
+export { FileUpload };

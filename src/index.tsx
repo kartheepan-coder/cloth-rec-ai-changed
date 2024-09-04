@@ -6,6 +6,10 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Shop } from "./shop";
 import Profile from "./components/Profile";
+import CheckOut from "./pages/Checkout";
+import Login from "./pages/Login";
+import Signup from "./pages/signup";
+import Admin from "./pages/Admin";
 
 const Index = () => {
   return (
@@ -13,7 +17,11 @@ const Index = () => {
       <Routes>
         <Route path="/" index element={<App />}></Route>
         <Route path="/category" element={<Shop />}></Route>
+        <Route path="/checkout" element={<CheckOut />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/signup" element={<Signup />}></Route>
+        <Route path="/admin" element={<Admin />}></Route>
       </Routes>
     </BrowserRouter>
   );
