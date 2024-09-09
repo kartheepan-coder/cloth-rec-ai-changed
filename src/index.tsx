@@ -10,20 +10,23 @@ import CheckOut from "./pages/Checkout";
 import Login from "./pages/Login";
 import Signup from "./pages/signup";
 import Admin from "./pages/Admin";
+import { AuthContext } from "./Providers/AuthProviders";
 
 const Index = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" index element={<App />}></Route>
-        <Route path="/category" element={<Shop />}></Route>
-        <Route path="/checkout" element={<CheckOut />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/signup" element={<Signup />}></Route>
-        <Route path="/admin" element={<Admin />}></Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthContext>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" index element={<App />}></Route>
+          <Route path="/category" element={<Shop />}></Route>
+          <Route path="/checkout" element={<CheckOut />}></Route>
+          <Route path="/profile" element={<Profile />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/admin" element={<Admin />}></Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthContext>
   );
 };
 

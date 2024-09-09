@@ -8,12 +8,112 @@ import { FileUpload } from "../App";
 
 export default function Admin() {
   const [selection, setselection] = useState("");
+  const [responseStatus, setResponseStatus] = useState<string | null>(null);
+
   const [dressType, setdressType] = useState("");
+  const backendUrl = "http://127.0.0.1:5000/api"; // Replace with your backend URL
+  const [uploadedFileName, setuploadedFileName] = useState("");
   const [selectedFile, setSelectedFile] = useState<File>();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
     setSelectedFile(file as File);
+  };
+
+  useEffect(() => {
+    initiateImageSegmentation(uploadedFileName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadedFileName]);
+  useEffect(() => {
+    // sendImageToBackend(selectedFile as string);
+    handleUpload(selectedFile);
+  }, [selectedFile]);
+
+  const handleUpload = async (file: File | undefined) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Convert base64 to Blob
+      // const blob = await fetch(image, { mode: "no-cors" }).then((res) =>
+      //   res.blob()
+      // );
+
+      // Create htmlFormData and append the image
+      const htmlFormData = new FormData();
+
+      htmlFormData.append("file", file);
+      htmlFormData.append("type", dressType);
+      htmlFormData.append("gender", selection);
+
+      // Send the image to the backend
+      const response = await fetch(backendUrl + "/clotheUpload", {
+        method: "POST",
+        body: htmlFormData,
+      });
+
+      if (response.ok) {
+        const filename = await response.json();
+        // console.log(filename["filename"]);
+        // console.log(response.json());
+        setResponseStatus("Image uploaded successfully!");
+        setuploadedFileName(filename["filepath"]);
+      } else {
+        // setResponseStatus("Failed to upload image.");
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      setResponseStatus("An error occurred while uploading the image.");
+    }
+  };
+
+  const initiateImageSegmentation = async (filename: string) => {
+    console.log(filename);
+    if (filename) {
+      try {
+        const response = await fetch(backendUrl + "/segment", {
+          method: "POST",
+          body: JSON.stringify({ filename: uploadedFileName }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const change = async () => {
+          try {
+            const response = await fetch(backendUrl + "/color", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                filename: uploadedFileName,
+                is_dress: "true",
+              }),
+            });
+
+            if (response.ok) {
+              // handleRedirect();
+            } else {
+              console.log("Nah");
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+        if (response.ok) {
+          change();
+        } else {
+          console.log("error");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    // console.log(response.json());
   };
 
   return (

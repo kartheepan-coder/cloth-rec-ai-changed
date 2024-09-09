@@ -1,9 +1,17 @@
 import { Box } from "@mui/material";
-import { ChangeEventHandler, useEffect, useRef, useState } from "react";
+import {
+  ChangeEventHandler,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Webcam from "react-webcam";
 import { ReactComponent as UploadSvg } from "../assets/cloud_upload_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import { Card } from "./Card";
 import { useNavigate } from "react-router-dom";
+import { AuthContextProvider } from "../Providers/AuthProviders";
+import { upload } from "@testing-library/user-event/dist/upload";
 
 const videoConstraints = {
   width: 1280,
@@ -11,7 +19,7 @@ const videoConstraints = {
   facingMode: "user",
 };
 
-const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
+const WebCamComp = ({ webCamData, name }: any) => {
   const webcamRef = useRef<Webcam>(null);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -26,6 +34,11 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
 
   const [faceTone, setfaceTone] = useState("");
   const navigate = useNavigate();
+
+  const auth: any = useContext(AuthContextProvider);
+  useEffect(() => {
+    console.log(auth);
+  }, [auth]);
 
   useEffect(() => {
     initiateImageSegmentation(uploadedFileName);
@@ -83,7 +96,7 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
       } else {
         setResponseStatus("Failed to upload image.");
       }
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.error("Error uploading image:", error);
       setResponseStatus("An error occurred while uploading the image.");
@@ -95,7 +108,7 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
     if (webcamRef.current && !isCaptured) {
       const imageSrc = webcamRef.current.getScreenshot();
       setImageSrc(imageSrc);
-      setWebCamData(imageSrc);
+      // setWebCamData(imageSrc);
       sendImageToBackend(imageSrc as string);
     } else {
       setImageSrc(null);
@@ -130,10 +143,11 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
         const filename = await response.json();
         setResponseStatus("Image uploaded successfully!");
         setuploadedFileName(filename["filename"]);
+        // auth.setUser({ ...auth.user, filename: uploadedFileName });
       } else {
         setResponseStatus("Failed to upload image.");
       }
-      console.log(response);
+      // console.log(response);
     } catch (error) {
       console.error("Error uploading image:", error);
       setResponseStatus("An error occurred while uploading the image.");
@@ -141,7 +155,7 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
   };
 
   const initiateImageSegmentation = async (filename: string) => {
-    console.log(filename);
+    // console.log(filename);
     if (filename) {
       try {
         const response = await fetch(backendUrl + "/segment", {
@@ -159,7 +173,10 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ name: name, filename: uploadedFileName }),
+              body: JSON.stringify({
+                name: auth.user["username"],
+                filename: uploadedFileName,
+              }),
             });
 
             if (response.ok) {
@@ -168,6 +185,12 @@ const WebCamComp = ({ webCamData, setWebCamData, name }: any) => {
               setUserName(user["name"]);
               setUserGender(user["gender"]);
               setfaceTone(user["facetone"]);
+              auth.setUser({
+                username: user["name"],
+                userGender: user["gender"],
+                faceTone: user["facetone"],
+                filename: uploadedFileName,
+              });
               setredirect(!redirect);
 
               // handleRedirect();

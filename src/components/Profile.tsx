@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement, useContext, useEffect } from "react";
 import { Card, Button } from "./Card";
 import image from "../assets/53a013b7b03234d99cb20cf346f77b88.jpg";
 import myImg from "../assets/WhatsApp Image 2024-05-22 at 19.29.23.jpeg";
@@ -10,6 +10,7 @@ import { ReactComponent as FemaleSvg } from "../assets/female_24dp_E8EAED_FILL0_
 import { ReactComponent as ArrowBack } from "../assets/arrow_back_2_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
+import { AuthContextProvider } from "../Providers/AuthProviders";
 
 export default function Profile({
   name = "",
@@ -22,11 +23,11 @@ export default function Profile({
 }) {
   const location = useLocation();
   const state = location.state || {};
+  const auth: any = useContext(AuthContextProvider);
 
   useEffect(() => {
-    const gender = state.gender as string;
-    console.log(state);
-  }, [state]);
+    console.log(auth.user);
+  }, [auth.user]);
 
   const url_Image = `http://127.0.0.1:5000/api/image/${state.name}`;
   return (

@@ -1,8 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Webcam from "react-webcam";
 import WebCamComp from "./components/Webcam";
 import { Button, Card } from "./components/Card";
 import { useNavigate } from "react-router-dom";
+import Login from "./pages/Login";
+import { AuthContext, AuthContextProvider } from "./Providers/AuthProviders";
+import Profile from "./components/Profile";
 
 export default function App() {
   const [webCamData, setWebCamData] = useState("");
@@ -13,12 +22,26 @@ export default function App() {
   const [userGender, setUserGender] = useState<string>("");
   const [skinTone, setskinTone] = useState("");
   const [redirect, setredirect] = useState(false);
+  const [loggedIn, setloggedIn] = useState(false);
   const navigate = useNavigate();
 
+  const auth: any = useContext(AuthContextProvider);
+
+  useEffect(() => {
+    if (JSON.stringify(auth.user) === JSON.stringify({})) {
+      console.log("user is loggedIn");
+      console.log(auth.user);
+      // change();
+    } else {
+      console.log(redirect);
+      change();
+    }
+    // console.log("No user");
+  }, [auth.user]);
+
   // useEffect(() => {
-  //   console.log(userGender);
-  //   console.log(userName);
-  // }, [userName, userGender])
+  //   console.log(auth);
+  // }, [auth.isLoggedIn]);
 
   // ;
 
@@ -38,6 +61,33 @@ export default function App() {
     }
   }, [redirect]);
 
+  // const change = async () => {
+  //   try {
+  //     const response = await fetch(backendUrl + "/name_verification", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ name: textInputValue }),
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       const user = data[0];
+  //       setUserName(user["name"]);
+  //       setUserGender(user["gender"]);
+  //       setskinTone(user["facetone"]);
+  //       setredirect(!redirect);
+
+  //       // handleRedirect();
+  //     } else {
+  //       setIsName(!isName);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   const change = async () => {
     try {
       const response = await fetch(backendUrl + "/name_verification", {
@@ -45,7 +95,7 @@ export default function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: textInputValue }),
+        body: JSON.stringify({ name: auth.user["name"] }),
       });
 
       if (response.ok) {
@@ -69,30 +119,33 @@ export default function App() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
       {/* // <div className="bg-white text-white p-8 rounded-lg shadow-lg flex flex-col w-1/2 min-h-[200px] max-h-[1000px] flex justify-center items-center"> */}
 
-      {isName ? (
-        <WebCamComp
-          webCamData={webCamData}
-          setWebCamData={setWebCamData}
-          name={textInputValue}
-        />
+      {!auth.user ? (
+        // <WebCamComp
+        //   webCamData={webCamData}
+        //   setWebCamData={setWebCamData}
+        //   name={textInputValue}
+        // />
+        // <Profile name={name} />
+        <div>you are here</div>
       ) : (
-        <Card>
-          <div className="flex flex-col h-[300px] justify-center ">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Your name
-            </label>
-            <TextInput
-              textInputValue={textInputValue}
-              setTextInputValue={setTextInputValue}
-            />
-            <div className="mt-[10px]">
-              <Button message={"Enter"} onClick={change} />
-            </div>
-          </div>
-        </Card>
+        // <Card>
+        //   <div className="flex flex-col h-[300px] justify-center ">
+        //     <label
+        //       htmlFor="email"
+        //       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        //     >
+        //       Your name
+        //     </label>
+        //     <TextInput
+        //       textInputValue={textInputValue}
+        //       setTextInputValue={setTextInputValue}
+        //     />
+        //     <div className="mt-[10px]">
+        //       <Button message={"Enter"} onClick={change} />
+        //     </div>
+        //   </div>
+        // </Card>
+        Login()
       )}
     </div>
     // </div>
