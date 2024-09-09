@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import "/Users/karthi/Development/mayoo-project/cloth-rec-ai-master/src/App.css";
 import Webcam from "react-webcam";
 import WebCamComp from "./components/Webcam";
 import { Button, Card } from "./components/Card";
@@ -12,8 +13,115 @@ import { useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import { AuthContext, AuthContextProvider } from "./Providers/AuthProviders";
 import Profile from "./components/Profile";
+const cursorStyle = {
+  height: 60,
+  width: 3,
+  display: "inline-block",
+  backgroundColor: "black",
+  marginLeft: 4,
+  marginTop: -4,
+  transition: "opacity 0.5s ease",
+};
 
-export default function App() {
+const textStyle = {
+  fontFamily: "Computer Modern, serif",
+  fontSize: 50,
+};
+
+const containerStyle = {
+  backgroundColor: "white",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+  width: "100%",
+};
+
+const App = () => {
+  const [frame, setFrame] = useState(0);
+  const [showComponent, setShowComponent] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
+  const text = "Mayoorathan AI Project";
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScrollTop > lastScrollTop) {
+        // Scrolling down
+        setShowComponent(true);
+        console.log(showComponent);
+      } else {
+        // Scrolling up
+        setShowComponent(false);
+        console.log(showComponent);
+      }
+      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop); // For Mobile or negative scrolling
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFrame((prevFrame) => prevFrame + 1);
+    }, 33); // roughly 30 frames per second
+    return () => clearInterval(interval);
+  }, []);
+
+  const charsShown = Math.floor(frame / 3);
+  const textToShow = text.slice(0, charsShown);
+  const cursorShown =
+    textToShow.length === text.length ? Math.floor(frame / 10) % 2 === 1 : true;
+
+  return showComponent ? (
+    <div
+      className={`fadeLift ${!showComponent ? "hidden" : ""}`}
+      style={containerStyle}
+    >
+      <div style={textStyle}>
+        {textToShow}
+
+        <span
+          style={{
+            ...cursorStyle,
+            opacity: cursorShown ? 1 : 0,
+          }}
+        />
+      </div>
+    </div>
+  ) : (
+    <Apps />
+  );
+};
+
+interface TypewriterEffectProps {
+  text: string; // Text to be animated
+  speed?: number; // Speed of typing effect in milliseconds
+}
+
+const TypewriterEffect: React.FC<TypewriterEffectProps> = ({
+  text,
+  speed = 100,
+}) => {
+  const [displayedText, setDisplayedText] = useState("");
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setDisplayedText((prev) => prev + text[index]);
+      index += 1;
+      if (index >= text.length) clearInterval(interval);
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, speed]);
+
+  return <div>{displayedText}</div>;
+};
+export function Apps() {
   const [webCamData, setWebCamData] = useState("");
   const [textInputValue, setTextInputValue] = useState("");
   const [isName, setIsName] = useState(false);
@@ -224,3 +332,5 @@ const FileUpload = (handleFileChange: any) => {
   );
 };
 export { FileUpload };
+
+export default App;

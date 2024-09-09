@@ -13,10 +13,14 @@ export default function CheckOut() {
   const [loading, setLoading] = useState(true); // For loading state
   const [error, setError] = useState(null);
   const [colors, setcolors] = useState<string[]>();
-  const [gender, setgender] = useState("");
+  const [gender, setgender] = useState("male");
 
   useEffect(() => {
+    setColorCategory("dark");
+  }, []);
+  useEffect(() => {
     setgender(state["gender"]);
+    console.log(gender);
     fetchImageData();
     console.log("it is called");
   }, [state]);
@@ -35,7 +39,7 @@ export default function CheckOut() {
         extractedColors[Math.floor(Math.random() * extractedColors.length)]
       );
     }
-  }, [imageData]);
+  }, [imageData, gender, colorCategory]);
   const fetchImageData = async () => {
     try {
       setLoading(true);
