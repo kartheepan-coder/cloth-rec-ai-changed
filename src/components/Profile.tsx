@@ -6,10 +6,11 @@ import Divider from "@mui/material/Divider";
 
 import { ReactComponent as MaleSvg } from "../assets/male_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import { ReactComponent as FemaleSvg } from "../assets/female_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
+import { ReactComponent as ShopCart } from "../assets/shopping_cart_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 
 import { ReactComponent as ArrowBack } from "../assets/arrow_back_2_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
 import { Box } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContextProvider } from "../Providers/AuthProviders";
 
 export default function Profile({
@@ -23,6 +24,11 @@ export default function Profile({
 }) {
   const location = useLocation();
   const state = location.state || {};
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/checkout", { state: { gender: state.gender } });
+  };
   const auth: any = useContext(AuthContextProvider);
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export default function Profile({
     <div className=" h-lvh flex justify-around items-center ">
       <Card>
         <div>
-          <div className="flex justify-start pb-[0.5rem]">
+          <div className="flex justify-between pb-[0.5rem]">
             <button
               id="dropdownButton"
               data-dropdown-toggle="dropdown"
@@ -42,6 +48,11 @@ export default function Profile({
               type="button"
             >
               <ArrowBack />
+            </button>
+            <button onClick={handleNavigate}>
+              <div className="flex justify-center items-center p-4 bg-gray-200 rounded-lg">
+                <ShopCart fill="black" />
+              </div>
             </button>
           </div>
           <div className="flex justify-around items-center pb-10">
