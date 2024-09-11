@@ -42,8 +42,7 @@ const App = () => {
   const [showComponent, setShowComponent] = useState(true);
   const [lastScrollTop, setLastScrollTop] = useState(0);
 
-  const text = "Mayoorathan AI Project";
-
+  const text = "Fashion AI Project";
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop =

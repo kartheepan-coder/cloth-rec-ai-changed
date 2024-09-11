@@ -72,7 +72,7 @@ export default function Login() {
     <div className="h-lvh w-lvw flex justify-center items-center">
       <Card>
         <div className="flex flex-col h-[500px] justify-center items-center ">
-          <h1 className="mb-5 text-white">Register Account</h1>
+          <h1 className="mb-5 text-white">Login Account</h1>
           <form className="max-w-sm mx-auto" onSubmit={handleBackend}>
             <div className="mb-2">
               <label

@@ -14,21 +14,26 @@ export default function CheckOut() {
   const [error, setError] = useState(null);
   const [colors, setcolors] = useState<string[]>();
   const [gender, setgender] = useState("male");
+  const [type, settype] = useState("top");
 
   useEffect(() => {
     setColorCategory("dark");
   }, []);
+
+  useEffect(() => {
+    console.log(type);
+  }, [type]);
+
   useEffect(() => {
     setgender(state["gender"]);
     console.log(gender);
     fetchImageData();
     console.log("it is called");
-  }, [state]);
-  // const colors = ["red", "blue", "green", "yellow", "purple", "black"];
+  }, [state, type]);
 
   useEffect(() => {
     fetchImageData();
-  }, [gender, colorCategory]);
+  }, [gender, colorCategory, type]);
 
   useEffect(() => {
     if (imageData && imageData.length > 0) {
@@ -39,7 +44,7 @@ export default function CheckOut() {
         extractedColors[Math.floor(Math.random() * extractedColors.length)]
       );
     }
-  }, [imageData, gender, colorCategory]);
+  }, [imageData, gender, colorCategory, type]);
   const fetchImageData = async () => {
     try {
       setLoading(true);
@@ -51,20 +56,17 @@ export default function CheckOut() {
         body: JSON.stringify({
           color_category: colorCategory,
           gender: gender,
+          type: type,
         }), // Send color category in request body
       });
-
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
-
       const data: ImageData[] = await response.json();
       if (response.ok) {
         setImageData(data);
         setLoading(false);
       }
-      // setImageData(data);
-      // setLoading(false);
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
@@ -75,17 +77,21 @@ export default function CheckOut() {
     console.log(selectedColor);
   }, [selectedColor]);
 
+  useEffect(() => {
+    console.log(type);
+  }, [type]);
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="flex w-4/5 h-[80vh] border border-gray-300 rounded-lg overflow-hidden bg-white">
-        {/* Left Side: Dress Preview */}
-
-        {/* Right Side: Color Palette */}
         {colors !== undefined ? (
           <ColorPalette
             colors={colors}
             onColorSelect={setSelectedColor}
             setColorCategory={setColorCategory}
+            selectedColor={selectedColor}
+            setType={settype}
+            type={type}
           />
         ) : null}
         {imageData !== undefined ? (
@@ -155,9 +161,13 @@ const ColorPalette = ({
   colors,
   onColorSelect,
   setColorCategory,
+  selectedColor,
+  setType,
+  type,
 }: ColorPaletteProps) => {
   return (
     <div className="flex-1 p-4 flex-col items-center justify-center content-center">
+      <h1 className="font-bold">Choose your {type.toLocaleUpperCase()}</h1>
       <div className="flex-col items-center">
         <button
           className="p-2 m-2 bg-gray-200 rounded"
@@ -184,12 +194,22 @@ const ColorPalette = ({
           {colors.map((color) => (
             <div
               key={color}
-              className={`w-16 h-16  cursor-pointer rounded-md`}
+              className={`w-16 h-16  cursor-pointer rounded-md ${
+                selectedColor === color
+                  ? `outline outline-2 outline-red-300`
+                  : ``
+              } `}
               onClick={() => onColorSelect(color)}
               style={{ backgroundColor: color }}
             ></div>
           ))}
         </div>
+        <button
+          className="p-2 m-2 bg-blue-500 rounded mr-2"
+          onClick={() => setType("bottom")}
+        >
+          Buy
+        </button>
       </div>
     </div>
   );
@@ -209,4 +229,7 @@ interface ColorPaletteProps {
   colors: string[];
   onColorSelect: (color: string) => void;
   setColorCategory: any;
+  selectedColor: string;
+  setType: any;
+  type: string;
 }
