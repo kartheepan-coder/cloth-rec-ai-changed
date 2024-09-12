@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 
 import { unescape } from "querystring";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function CheckOut() {
   const location = useLocation();
@@ -15,20 +15,25 @@ export default function CheckOut() {
   const [colors, setcolors] = useState<string[]>();
   const [gender, setgender] = useState("male");
   const [type, settype] = useState("top");
+  const navigate = useNavigate();
+  const [selectedTop, setSelectedTop] = useState<ImageData | undefined>(
+    undefined
+  );
+  const [selectedBottom, setSelectedBottom] = useState<ImageData | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     setColorCategory("dark");
   }, []);
 
   useEffect(() => {
-    console.log(type);
-  }, [type]);
+    console.log(selectedBottom, selectedTop);
+  }, [selectedBottom, selectedTop]);
 
   useEffect(() => {
     setgender(state["gender"]);
-    console.log(gender);
     fetchImageData();
-    console.log("it is called");
   }, [state, type]);
 
   useEffect(() => {
@@ -73,6 +78,28 @@ export default function CheckOut() {
     }
   };
 
+  const handleBuy = () => {
+    if (type === "top") {
+      const selectedTopItem = imageData.find(
+        (item) => item.prominent_color === selectedColor
+      );
+      setSelectedTop(selectedTopItem);
+      settype("bottom"); // Switch to selecting bottom clothes
+    } else if (type === "bottom") {
+      const selectedBottomItem = imageData.find(
+        (item) => item.prominent_color === selectedColor
+      );
+      setSelectedBottom(selectedBottomItem);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedTop && selectedBottom) {
+      navigate("/preview", {
+        state: { top: selectedTop, bottom: selectedBottom },
+      });
+    }
+  }, [selectedTop, selectedBottom, navigate]);
   useEffect(() => {
     console.log(selectedColor);
   }, [selectedColor]);
@@ -90,7 +117,7 @@ export default function CheckOut() {
             onColorSelect={setSelectedColor}
             setColorCategory={setColorCategory}
             selectedColor={selectedColor}
-            setType={settype}
+            setType={handleBuy}
             type={type}
           />
         ) : null}
@@ -204,10 +231,7 @@ const ColorPalette = ({
             ></div>
           ))}
         </div>
-        <button
-          className="p-2 m-2 bg-blue-500 rounded mr-2"
-          onClick={() => setType("bottom")}
-        >
+        <button className="p-2 m-2 bg-blue-500 rounded mr-2" onClick={setType}>
           Buy
         </button>
       </div>

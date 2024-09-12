@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/signup";
 import Admin from "./pages/Admin";
 import { AuthContext } from "./Providers/AuthProviders";
+import Preview from "./components/Preview";
 
 const Index = () => {
   return (
@@ -23,6 +24,8 @@ const Index = () => {
           <Route path="/profile" element={<Profile />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/preview" element={<Preview />}></Route>
+
           <Route path="/admin" element={<Admin />}></Route>
         </Routes>
       </BrowserRouter>
