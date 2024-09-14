@@ -8,7 +8,7 @@ export default function Preview() {
   const state = location.state || {};
   const navigate = useNavigate();
 
-  const [gender, setgender] = useState("");
+  const [gender, setgender] = useState(state.gender);
 
   useEffect(() => {
     setgender(state.gender);

@@ -96,7 +96,7 @@ export default function CheckOut() {
   useEffect(() => {
     if (selectedTop && selectedBottom) {
       navigate("/preview", {
-        state: { top: selectedTop, bottom: selectedBottom },
+        state: { top: selectedTop, bottom: selectedBottom, gender: gender },
       });
     }
   }, [selectedTop, selectedBottom, navigate]);
