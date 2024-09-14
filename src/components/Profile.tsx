@@ -27,8 +27,11 @@ export default function Profile({
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate("/checkout", { state: { gender: state.gender } });
+    navigate("/checkout", {
+      state: { gender: state.gender, skinTone: state.faceTone },
+    });
   };
+
   const auth: any = useContext(AuthContextProvider);
 
   useEffect(() => {

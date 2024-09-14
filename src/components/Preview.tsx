@@ -1,12 +1,18 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card } from "./Card";
 import { ReactComponent as ArrowBack } from "../assets/arrow_back_2_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
+import { useEffect, useState } from "react";
 
 export default function Preview() {
   const location = useLocation();
   const state = location.state || {};
   const navigate = useNavigate();
-  const gender = "male";
+
+  const [gender, setgender] = useState("");
+
+  useEffect(() => {
+    setgender(state.gender);
+  }, [state.gender]);
   return (
     <div className="h-lvh w-lvw flex justify-center items-center">
       <Card>

@@ -46,17 +46,13 @@ const App = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
+        window.scrollY || document.documentElement.scrollTop;
       if (currentScrollTop > lastScrollTop) {
-        // Scrolling down
         setShowComponent(true);
-        console.log(showComponent);
       } else {
-        // Scrolling up
         setShowComponent(false);
-        console.log(showComponent);
       }
-      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop); // For Mobile or negative scrolling
+      setLastScrollTop(currentScrollTop <= 0 ? 0 : currentScrollTop);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -81,8 +77,9 @@ const App = () => {
       style={containerStyle}
     >
       <div style={textStyle}>
-        {textToShow}
-
+        <button onClick={() => setShowComponent(!showComponent)}>
+          {textToShow}
+        </button>
         <span
           style={{
             ...cursorStyle,
@@ -136,7 +133,6 @@ export function Apps() {
 
   useEffect(() => {
     if (JSON.stringify(auth.user) === JSON.stringify({})) {
-      console.log("user is loggedIn");
       console.log(auth.user);
       // change();
     } else {
