@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import "/Users/karthi/Development/mayoo-project/cloth-rec-ai-master/src/App.css";
+import "../src/App.css";
 import Webcam from "react-webcam";
 import WebCamComp from "./components/Webcam";
 import { Button, Card } from "./components/Card";
