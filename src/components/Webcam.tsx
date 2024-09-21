@@ -36,14 +36,16 @@ const WebCamComp = ({ webCamData, name }: any) => {
   const navigate = useNavigate();
 
   const auth: any = useContext(AuthContextProvider);
-  useEffect(() => {
-    console.log(auth);
-  }, [auth]);
 
   useEffect(() => {
     initiateImageSegmentation(uploadedFileName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedFileName]);
+
+  useEffect(() => {
+    console.log(auth.user);
+    console.log(auth.user["name"]);
+  }, [auth.user]);
 
   useEffect(() => {
     if (redirect) {
@@ -57,9 +59,7 @@ const WebCamComp = ({ webCamData, name }: any) => {
     }
   }, [redirect]);
   useEffect(() => {
-    // sendImageToBackend(selectedFile as string);
     handleUpload(selectedFile);
-    console.log(selectedFile);
   }, [selectedFile]);
   useEffect(() => {
     console.log(isUpload);
@@ -81,7 +81,7 @@ const WebCamComp = ({ webCamData, name }: any) => {
       const htmlFormData = new FormData();
 
       htmlFormData.append("file", file);
-      htmlFormData.append("name", name);
+      htmlFormData.append("name", auth.user["name"]);
 
       // Send the image to the backend
       const response = await fetch(backendUrl + "/upload", {
@@ -174,7 +174,7 @@ const WebCamComp = ({ webCamData, name }: any) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                name: auth.user["username"],
+                name: auth.user["name"],
                 filename: uploadedFileName,
               }),
             });
@@ -186,7 +186,7 @@ const WebCamComp = ({ webCamData, name }: any) => {
               setUserGender(user["gender"]);
               setfaceTone(user["facetone"]);
               auth.setUser({
-                username: user["name"],
+                ...auth.user,
                 userGender: user["gender"],
                 faceTone: user["facetone"],
                 filename: uploadedFileName,

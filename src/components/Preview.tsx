@@ -1,19 +1,38 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card } from "./Card";
 import { ReactComponent as ArrowBack } from "../assets/arrow_back_2_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.svg";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContextProvider } from "../Providers/AuthProviders";
 
 export default function Preview() {
   const location = useLocation();
   const state = location.state || {};
   const navigate = useNavigate();
+  const [finished, setfinished] = useState(false);
 
   const [gender, setgender] = useState(state.gender);
+
+  const auth: any = useContext(AuthContextProvider);
+
+  useEffect(() => {
+    // Set a timeout to navigate after 30 seconds
+    const timer = setTimeout(() => {
+      navigate("/");
+      auth.setUser({}); // Replace '/your-route' with your target route
+    }, 10000); // 30000 ms = 30 seconds
+
+    // Cleanup the timeout if the component is unmounted before 30 seconds
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   useEffect(() => {
     setgender(state.gender);
   }, [state.gender]);
-  return (
+
+  useEffect(() => {
+    console.log(!finished);
+  }, [finished, state.isPurchaseDone]);
+  return !finished ? (
     <div className="h-lvh w-lvw flex justify-center items-center">
       <Card>
         <div className="w-[100%]">
@@ -59,10 +78,22 @@ export default function Preview() {
             {/* const image =
       `http://127.0.0.1:5000/api/get-cloth-image?gender=female&image_name=$
       {imageData[0]["image_name"]}`; */}
-            <p>Dress Preview</p>
+
+            <button
+              className="p-2 m-2 bg-blue-500 rounded mr-2"
+              onClick={() => {
+                setfinished(!finished);
+              }}
+            >
+              Done
+            </button>
           </div>
         </div>
       </Card>
+    </div>
+  ) : (
+    <div className="flex justify-center items-center font-bold text-lg h-lvh text-5xl ">
+      👋 Thank you for purchasing
     </div>
   );
 }

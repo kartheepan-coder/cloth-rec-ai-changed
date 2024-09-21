@@ -1,46 +1,30 @@
-import React, {
-  createContext,
-  FC,
-  ReactElement,
-  ReactNode,
-  useState,
-} from "react";
+import React, { createContext, useState, FC, ReactNode } from "react";
 
-// Create a context
-
-// Define types for your context
-// interface User {
-//   name: string;
-//   age: number;
-// }
-
-// interface AuthContextType {
-//   user?: User;
-//   setUser?: React.Dispatch<React.SetStateAction<User>>;
-//   theme: string;
-//   setTheme: React.Dispatch<React.SetStateAction<string>>;
-//   isLoggedIn: boolean;
-//   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-// }
-
-// // Create a context with a default value
-// export const AuthContextProvider = createContext<AuthContextType | undefined>(undefined);
-// // Create a provider component with types
-// interface AuthContextProps {
-//   children: ReactNode;
-// }
-
-export const AuthContextProvider = createContext({});
-// Create a provider component with types
+// Define the shape of the AuthContext
 interface AuthContextProps {
+  user: object;
+  setUser: React.Dispatch<React.SetStateAction<object>>;
+  isLoggedIn: boolean;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  isSignedIn: boolean;
+  setisSignedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Create the context with a default value
+export const AuthContextProvider = createContext<AuthContextProps | undefined>(
+  undefined
+);
+
+// Define the props that will be passed to the AuthContext component
+interface AuthProviderProps {
   children: ReactNode;
 }
 
-// // Create a provider component
-export const AuthContext: FC<AuthContextProps> = ({ children }) => {
-  const [user, setUser] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSignedIn, setisSignedIn] = useState(false);
+// AuthContext component
+export const AuthContext: FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<object>({});
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isSignedIn, setisSignedIn] = useState<boolean>(false);
 
   return (
     <AuthContextProvider.Provider

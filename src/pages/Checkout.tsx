@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
 
 import { unescape } from "querystring";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContextProvider } from "../Providers/AuthProviders";
 
 export default function CheckOut() {
   const location = useLocation();
@@ -15,6 +16,7 @@ export default function CheckOut() {
   const [colors, setcolors] = useState<string[]>();
   const [gender, setgender] = useState("male");
   const [type, settype] = useState("top");
+
   const navigate = useNavigate();
   const [selectedTop, setSelectedTop] = useState<ImageData | undefined>(
     undefined
@@ -22,22 +24,60 @@ export default function CheckOut() {
   const [selectedBottom, setSelectedBottom] = useState<ImageData | undefined>(
     undefined
   );
+  const auth: any = useContext(AuthContextProvider);
+
+  useEffect(() => {
+    console.log(auth.user);
+  }, [auth.user]);
 
   useEffect(() => {
     setColorCategory("dark");
   }, []);
 
   useEffect(() => {
-    console.log(selectedBottom, selectedTop);
+    if (selectedBottom && selectedBottom) {
+      console.log("it is selected");
+      handleSavePurchase();
+      console.log({
+        purchasedTop: selectedTop,
+        purchasedBottom: selectedBottom,
+        user_id: auth.user["user_id"],
+      });
+    }
   }, [selectedBottom, selectedTop]);
+
+  const handleSavePurchase = async () => {
+    const response = await fetch("http://127.0.0.1:5000/api/save_purchase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        purchasedTop: selectedTop,
+        purchasedBottom: selectedBottom,
+        user_id: auth.user["user_id"],
+      }), // Send color category in request body
+    });
+    if (response.ok) {
+      const data = await response.json();
+    }
+  };
 
   useEffect(() => {
     setgender(state["gender"]);
-    fetchImageData();
+    if (colorCategory === "recommended") {
+      fetchImageData();
+    } else {
+      fetchImageData();
+    }
   }, [state, type]);
 
   useEffect(() => {
-    fetchImageData();
+    if (colorCategory === "recommended") {
+      fetchImageData();
+    } else {
+      fetchImageData();
+    }
   }, [gender, colorCategory, type]);
 
   useEffect(() => {
@@ -51,18 +91,31 @@ export default function CheckOut() {
     }
   }, [imageData, gender, colorCategory, type]);
   const fetchImageData = async () => {
+    const imagesData = JSON.stringify({
+      color_category: colorCategory,
+      gender: gender,
+      type: type,
+    });
+
+    const recommendedData = JSON.stringify({
+      gender: auth.user["gender"], // or "Male"
+      colorTone: auth.user["userTone"], // The user's skin tone in hex format
+      dressType: type, // or "bottom"
+    });
+
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/get-images", {
+
+      const url =
+        colorCategory === "recommended"
+          ? "http://localhost:5000/api/recommend"
+          : " http://localhost:5000/api/get-images";
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          color_category: colorCategory,
-          gender: gender,
-          type: type,
-        }), // Send color category in request body
+        body: colorCategory === "recommended" ? recommendedData : imagesData, // Send color category in request body
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
@@ -96,7 +149,11 @@ export default function CheckOut() {
   useEffect(() => {
     if (selectedTop && selectedBottom) {
       navigate("/preview", {
-        state: { top: selectedTop, bottom: selectedBottom, gender: gender },
+        state: {
+          top: selectedTop,
+          bottom: selectedBottom,
+          gender: gender,
+        },
       });
     }
   }, [selectedTop, selectedBottom, navigate]);
@@ -132,14 +189,6 @@ export default function CheckOut() {
         )}
       </div>
     </div>
-    // <div className="bg-red-500 h-[100vh] flex justify-center items-center">
-    //   <div className="bg-black w-[100vw] h-4/5 mx-40 rounded-lg flex flex-row">
-    //     <div className="bg-yellow-300 w-[auto] h-3/4 mx-20 rounded-lg ">
-    //       <h1>hiiii</h1>
-    //     </div>
-    //     <div className="bg-yellow-300 w-[auto] h-3/4 mx-20 rounded-lg "></div>
-    //   </div>
-    // </div>
   );
 }
 
@@ -196,6 +245,12 @@ const ColorPalette = ({
     <div className="flex-1 p-4 flex-col items-center justify-center content-center">
       <h1 className="font-bold">Choose your {type.toLocaleUpperCase()}</h1>
       <div className="flex-col items-center">
+        <button
+          className="p-2 m-2 bg-gray-200 rounded"
+          onClick={() => setColorCategory("recommended")}
+        >
+          Recommended
+        </button>
         <button
           className="p-2 m-2 bg-gray-200 rounded"
           onClick={() => setColorCategory("light")}

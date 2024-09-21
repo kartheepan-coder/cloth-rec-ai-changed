@@ -14,12 +14,6 @@ export default function Login() {
   const [loggedIn, setloggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     auth.setIsLoggedIn(!auth.isLoggedIn);
-  //   }
-  // }, [loggedIn]);
-
   const handlePasswordChange = (event: any) => {
     setpassword(event.target.value);
   };
@@ -41,19 +35,10 @@ export default function Login() {
 
       const data = await response.json();
       if (response.ok) {
-        // const user = data[0];
-        // setUserName(user["name"]);
-        // setUserGender(user["gender"]);
-        // setskinTone(user["facetone"]);
-        // setredirect(!redirect);
-        // handleRedirect();
-        // console.log(data["message"]);
-
+        console.log("data is ", data["user_info"]);
         auth.setIsLoggedIn(!auth.isLoggedIn);
-        auth.setUser({ ...auth.user, ...data[0] });
-
-        // console.log(auth);
-        // setloggedIn(true);
+        auth.setUser(data["user_info"]);
+        console.log("current user in auth is ", auth.user);
       } else if (response.status === 401) {
         setpasswordError(data["error"]);
       } else if (response.status === 404) {

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Card } from "../components/Card";
 import { AuthContextProvider } from "../Providers/AuthProviders";
 import WebCamComp from "../components/Webcam";
@@ -37,25 +37,15 @@ export default function Signup() {
 
       const data = await response.json();
       if (response.ok) {
-        // const data = await response.json();
-        // const user = data[0];
-        // setUserName(user["name"]);
-        // setUserGender(user["gender"]);
-        // setskinTone(user["facetone"]);
-        // setredirect(!redirect);
-        // handleRedirect();
-        // console.log(data["message"]);
-        // console.log(auth);
-        // setloggedIn(true);
         auth.setisSignedIn(!auth.isSignedIn);
-        auth.setUser({ username: name });
+        auth.setUser(data["user_info"]);
+        localStorage.setItem("user", JSON.stringify(data["user_info"]));
       } else if (response.status === 401) {
-        console.log("jji");
+        console.log("error 401");
       } else if (response.status === 404) {
       } else if (response.status == 400) {
         // setnameError();
       } else {
-        // setIsName(!isName);
         console.log(response.status);
       }
     } catch (error) {
@@ -158,7 +148,7 @@ export default function Signup() {
     </div>
   ) : (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
-      <WebCamComp name={name} />
+      <WebCamComp name={"karthee"} />
     </div>
   );
 }

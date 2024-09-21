@@ -36,7 +36,33 @@ export default function Profile({
 
   useEffect(() => {
     console.log(auth.user);
+    if (!auth.isLoggedIn) {
+      handleUpdateUser(auth.user);
+      console.log("hiii");
+    }
   }, [auth.user]);
+
+  const handleUpdateUser = async (user_info: any) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/update_user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user_info),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        console.log("data is send");
+      } else {
+        console.error(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const url_Image = `http://127.0.0.1:5000/api/image/${state.name}`;
   return (
